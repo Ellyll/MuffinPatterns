@@ -9,53 +9,90 @@ function do_the_muffin_magic() {
 }
 
 function draw_lines(canvas, context, numberOfLines) {
-    var yStep = canvas.height / numberOfLines;
-    var xStep = canvas.width / numberOfLines;
-    var xMax = canvas.width-1;
-    var yMax = canvas.height-1;
-
-    var colours = [ '#F55', '#55F', '#5F5', '#FF5' ];
-    var colourIndex = 0;
-
-    for (var i=0 ; i<numberOfLines; i++) {
-        draw_line(context, 0, i*yStep, i*xStep, yMax, colours[colourIndex]);
-        if (colourIndex === colours.length-1) {
-            colourIndex = 0;
-        } else {
-            colourIndex++;
-        }
-    }
-
-    draw_line(context, 0, 0, 0, yMax, '#F00');
-    draw_line(context, 0, yMax, xMax, yMax, '#00F');
-}
-
-function draw_line(context, x1, y1, x2, y2, strokeStyle) {
-    context.beginPath();
-    context.strokeStyle = strokeStyle;
-    context.moveTo(x1,y1);
-    context.lineTo(x2,y2);
-    context.stroke();
+    var graphThing = new GraphThing(0, 0, canvas.width, canvas.height, numberOfLines);
+    graphThing.render(context);
 }
 
 function draw_circle_thing(canvas, context) {
     var xc = (canvas.width / 2) - 1;
     var yc = (canvas.width / 2) - 1;
     var radius = 50;
-    var step = (2.0 * Math.PI) / 16.0;
+    var numberOfPoints = 16.0;
+    var rotation = 0.0;
+
+    var circleThing = new CircleThing(xc, yc, radius, numberOfPoints, rotation);
+    circleThing.render(context);
+}
+
+var Line = function(xStart, yStart, xEnd, yEnd, strokeStyle) {
+    this.xStart = xStart;
+    this.yStart = yStart;
+    this.xEnd = xEnd;
+    this.yEnd = yEnd;
+    this.strokeStyle = strokeStyle;
+};
+Line.prototype.render = function(context) {
+    context.beginPath();
+    context.strokeStyle = this.strokeStyle;
+    context.moveTo(this.xStart,this.yStart);
+    context.lineTo(this.xEnd,this.yEnd);
+    context.stroke();
+};
+
+var CircleThing = function(x, y, radius, numberOfPoints, rotation) {
+    this.x = x;
+    this.y = y;
+    this.radius = radius;
+    this.rotation = rotation;
+    this.numberOfPoints = numberOfPoints;
+};
+CircleThing.prototype.setRotation = function(rotation) {
+    this.rotation = rotation;
+};
+CircleThing.prototype.render = function(context) {
+    var colours = [ '#F55', '#55F', '#5F5', '#FF5' ];
+    var colourIndex = 0;
+
+    var step = 2.0*Math.PI/this.numberOfPoints;
+
+    for(var angle = this.rotation; angle-this.rotation < (2.0*Math.PI) ; angle += step) {
+        var startAngle = angle - (step * 3.0);
+
+        var x1 = this.x + (this.radius * Math.sin(startAngle));
+        var y1 = this.y + (this.radius * Math.cos(startAngle));
+        var x2 = this.x + (this.radius * Math.sin(angle));
+        var y2 = this.y + (this.radius * Math.cos(angle));
+
+        var line = new Line(x1, y1, x2, y2, colours[colourIndex]);
+        line.render(context);
+
+        if (colourIndex === colours.length-1) {
+            colourIndex = 0;
+        } else {
+            colourIndex++;
+        }
+    }
+};
+
+var GraphThing = function(xStart, yStart, width, height, numberOfLines) {
+    this.xStart = xStart;
+    this.yStart = yStart;
+    this.width = width;
+    this.height = height;
+    this.numberOfLines = numberOfLines;
+};
+GraphThing.prototype.render = function(context) {
+    var yStep = this.height / this.numberOfLines;
+    var xStep = this.width / this.numberOfLines;
+    var xMax = this.width - 1;
+    var yMax = this.height - 1;
 
     var colours = [ '#F55', '#55F', '#5F5', '#FF5' ];
     var colourIndex = 0;
 
-    for(var angle = 0; angle < (2.0*Math.PI) ; angle += step) {
-        var startAngle = angle - (step * 3.0);
-
-        var x1 = xc + (radius * Math.sin(startAngle));
-        var y1 = yc + (radius * Math.cos(startAngle));
-        var x2 = xc + (radius * Math.sin(angle));
-        var y2 = yc + (radius * Math.cos(angle));
-
-        draw_line(context, x1, y1, x2, y2, colours[colourIndex]);
+    for (var i=0 ; i<this.numberOfLines; i++) {
+        var line = new Line(this.xStart, this.yStart+(i*yStep), this.xStart+(i*xStep), this.yStart+yMax, colours[colourIndex]);
+        line.render(context);
         if (colourIndex === colours.length-1) {
             colourIndex = 0;
         } else {
@@ -63,4 +100,8 @@ function draw_circle_thing(canvas, context) {
         }
     }
 
-}
+    var yAxisLine = new Line(this.xStart, this.yStart, this.xStart, this.yStart + yMax, '#F00');
+    var xAxisLine = new Line(this.xStart, this.yStart + yMax, this.xStart + xMax, this.yStart + yMax, '#00F');
+    yAxisLine.render(context);
+    xAxisLine.render(context);
+};
