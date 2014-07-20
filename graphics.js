@@ -14,6 +14,40 @@ Line.prototype.render = function(context) {
     context.stroke();
 };
 
+var Circle = function(x, y, radius, strokeStyle, fillStyle) {
+    this.x = x;
+    this.y = y;
+    this.radius = radius;
+    this.strokeStyle = strokeStyle;
+
+    if (typeof strokeStyle === 'undefined' || strokeStyle === null || strokeStyle === '') {
+        this.strokeStyle = null;
+        this.stroked = false;
+    } else {
+        this.strokeStyle = strokeStyle;
+        this.stroked = true;
+    }
+
+    if (typeof fillStyle === 'undefined' || fillStyle === null || fillStyle === '') {
+        this.fillStyle = null;
+        this.filled = false;
+    } else {
+        this.fillStyle = fillStyle;
+        this.filled = true;
+    }
+};
+Circle.prototype.render = function(context) {
+    context.beginPath();
+
+    if (this.stroked) context.strokeStyle = this.strokeStyle;
+    if (this.filled)  context.fillStyle = this.fillStyle;
+
+    context.arc(this.x, this.y, this.radius, 0, Math.PI*2, false);
+
+    if (this.filled)  context.fill();
+    if (this.stroked) context.stroke();
+};
+
 var CircleThing = function(x, y, radius, numberOfPoints, rotation) {
     this.x = x;
     this.y = y;
