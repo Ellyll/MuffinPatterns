@@ -1,4 +1,10 @@
 
+function maximise_canvas(canvas) {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+
+
 var Line = function(xStart, yStart, xEnd, yEnd, strokeStyle) {
     this.xStart = xStart;
     this.yStart = yStart;
