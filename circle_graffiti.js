@@ -34,7 +34,7 @@ function draw_circle_graffiti() {
         x = xc + Math.cos(angle)*r;
         y = yc + Math.sin(angle)*r;
         patterns.push(new Circle(x, y, 14*percent, colour));
-        patterns.push(new Circle(x, y, 2, colour, colour));
+        patterns.push(new Circle(x, y, 0.5*percent, colour, colour));
     }
 
     // Larger inner circles
@@ -46,12 +46,12 @@ function draw_circle_graffiti() {
         x = xc + Math.cos(angle)*r;
         y = yc + Math.sin(angle)*r;
         patterns.push(new Circle(x, y, 10*percent, colour));
-        patterns.push(new Circle(x, y, 2, colour, colour));
+        patterns.push(new Circle(x, y, 0.5*percent, colour, colour));
 
         x = xc + Math.cos(angle)*r2;
         y = yc + Math.sin(angle)*r2;
         patterns.push(new Circle(x, y, 10*percent, colour));
-        patterns.push(new Circle(x, y, 2, colour, colour));
+        patterns.push(new Circle(x, y, 0.5*percent, colour, colour));
 
     }
 
