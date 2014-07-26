@@ -1,6 +1,12 @@
 
 // Inspired by http://www.bbc.co.uk/news/uk-england-28035013
 
+function init_circle_graffiti() {
+    draw_circle_graffiti();
+    var canvas = document.getElementById('canvas');
+    window.addEventListener('resize', draw_circle_graffiti);
+}
+
 function draw_circle_graffiti() {
     var canvas = document.getElementById('canvas');
     var context = canvas.getContext('2d');
