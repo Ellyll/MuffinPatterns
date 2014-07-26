@@ -4,6 +4,9 @@ function maximise_canvas(canvas) {
     canvas.height = window.innerHeight;
 }
 
+function degrees_to_radians(degrees) {
+    return (Math.PI/180)*degrees;
+}
 
 var Line = function(xStart, yStart, xEnd, yEnd, strokeStyle) {
     this.xStart = xStart;
@@ -18,6 +21,50 @@ Line.prototype.render = function(context) {
     context.moveTo(this.xStart,this.yStart);
     context.lineTo(this.xEnd,this.yEnd);
     context.stroke();
+};
+
+var Arc = function(x, y, radius, startAngle, endAngle, anticlockwise, strokeStyle, fillStyle) {
+    this.x = x;
+    this.y = y;
+    this.radius = radius;
+    this.startAngle = startAngle;
+    this.endAngle = endAngle;
+    this.anticlockwise = anticlockwise;
+    this.strokeStyle = null;
+    this.fillStyle = null;
+
+    if (typeof anticlockwise === 'undefined' || anticlockwise === null) {
+        this.anticlockwise = false;
+    } else {
+        this.anticlockwise = anticlockwise;
+    }
+
+    if (typeof strokeStyle === 'undefined' || strokeStyle === null || strokeStyle === '') {
+        this.strokeStyle = null;
+        this.stroked = false;
+    } else {
+        this.strokeStyle = strokeStyle;
+        this.stroked = true;
+    }
+
+    if (typeof fillStyle === 'undefined' || fillStyle === null || fillStyle === '') {
+        this.fillStyle = null;
+        this.filled = false;
+    } else {
+        this.fillStyle = fillStyle;
+        this.filled = true;
+    }
+};
+Arc.prototype.render = function(context) {
+    context.beginPath();
+
+    if (this.stroked) context.strokeStyle = this.strokeStyle;
+    if (this.filled)  context.fillStyle = this.fillStyle;
+
+    context.arc(this.x, this.y, this.radius, this.startAngle, this.endAngle, this.anticlockwise);
+
+    if (this.filled)  context.fill();
+    if (this.stroked) context.stroke();
 };
 
 var Circle = function(x, y, radius, strokeStyle, fillStyle) {
