@@ -61,5 +61,22 @@ function draw_circle_graffiti() {
     patterns.push(new Arc(xc, yc-(82*percent), 82*percent, degrees_to_radians(30), degrees_to_radians(150), false, colour));
     patterns.push(new Arc(xc, yc+(82*percent), 82*percent, degrees_to_radians(-150), degrees_to_radians(-30), false, colour));
 
+    // Petals
+    add_petals(patterns, xc, yc, 82*percent, 16*percent, colour);
+
     patterns.forEach(function(p) { p.render(context); });
+}
+
+function add_petals(patterns, xc, yc, r1, r2, colour) {
+    var arcAngle = Math.PI - Math.acos(r2/(2*r1));
+
+    var numberOfPetals = Math.floor((Math.PI*r1)/r2);
+    var step = (Math.PI*2)  / numberOfPetals;
+
+    for (var i=0; i<numberOfPetals ; i++) {
+        var angle = (i*step) - (Math.PI/2);
+        var x = Math.cos(angle)*r1;
+        var y = Math.sin(angle)*r1;
+        patterns.push(new Arc(xc+x, yc+y, r2, -arcAngle+angle, arcAngle+angle, false, colour));
+    }
 }
