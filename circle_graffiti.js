@@ -15,6 +15,8 @@ function draw_circle_graffiti() {
 
     var colour = '#00FF00';
     var patterns = [];
+
+    // Concentric circles
     patterns.push(new Circle(xc, yc, 2, colour, colour));
     patterns.push(new Circle(xc, yc, 14*percent, colour));
     patterns.push(new Circle(xc, yc, 28*percent, colour));
@@ -22,6 +24,7 @@ function draw_circle_graffiti() {
     patterns.push(new Circle(xc, yc, 70*percent, colour));
     patterns.push(new Circle(xc, yc, 82*percent, colour));
 
+    // Smaller inner circles
     var angle;
     var step = (Math.PI*2) / 4;
     var start = step / 2;
@@ -34,6 +37,7 @@ function draw_circle_graffiti() {
         patterns.push(new Circle(x, y, 2, colour, colour));
     }
 
+    // Larger inner circles
     step = (Math.PI*2) / 4;
     start = 0;
     r = 47*percent;
@@ -50,6 +54,12 @@ function draw_circle_graffiti() {
         patterns.push(new Circle(x, y, 2, colour, colour));
 
     }
+
+    // Inner arcs
+    patterns.push(new Arc(xc-(82*percent), yc, 82*percent, degrees_to_radians(-60), degrees_to_radians(60), false, colour));
+    patterns.push(new Arc(xc+(82*percent), yc, 82*percent, degrees_to_radians(120), degrees_to_radians(-120), false, colour));
+    patterns.push(new Arc(xc, yc-(82*percent), 82*percent, degrees_to_radians(30), degrees_to_radians(150), false, colour));
+    patterns.push(new Arc(xc, yc+(82*percent), 82*percent, degrees_to_radians(-150), degrees_to_radians(-30), false, colour));
 
     patterns.forEach(function(p) { p.render(context); });
 }
