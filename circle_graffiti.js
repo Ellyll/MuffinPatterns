@@ -70,7 +70,10 @@ function draw_circle_graffiti() {
     // Petals
     add_petals(patterns, xc, yc, 82*percent, 16*percent, colour);
 
-    patterns.forEach(function(p) { p.render(context); });
+    //patterns.forEach(function(p) { p.render(context); });
+
+    var canvasRender = new CanvasRenderer();
+    canvasRender.render(patterns, context);
 }
 
 function add_petals(patterns, xc, yc, r1, r2, colour) {

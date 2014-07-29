@@ -9,21 +9,18 @@ function degrees_to_radians(degrees) {
 }
 
 var Line = function(xStart, yStart, xEnd, yEnd, strokeStyle) {
+    this.name = 'Line';
     this.xStart = xStart;
     this.yStart = yStart;
     this.xEnd = xEnd;
     this.yEnd = yEnd;
     this.strokeStyle = strokeStyle;
+    this.isPrimitive = true;
 };
-Line.prototype.render = function(context) {
-    context.beginPath();
-    context.strokeStyle = this.strokeStyle;
-    context.moveTo(this.xStart,this.yStart);
-    context.lineTo(this.xEnd,this.yEnd);
-    context.stroke();
-};
+Line.prototype.getPrimitives = function() { return [ this ]; };
 
 var Arc = function(x, y, radius, startAngle, endAngle, anticlockwise, strokeStyle, fillStyle) {
+    this.name = 'Arc';
     this.x = x;
     this.y = y;
     this.radius = radius;
@@ -32,6 +29,7 @@ var Arc = function(x, y, radius, startAngle, endAngle, anticlockwise, strokeStyl
     this.anticlockwise = anticlockwise;
     this.strokeStyle = null;
     this.fillStyle = null;
+    this.isPrimitive = true;
 
     if (typeof anticlockwise === 'undefined' || anticlockwise === null) {
         this.anticlockwise = false;
@@ -55,23 +53,15 @@ var Arc = function(x, y, radius, startAngle, endAngle, anticlockwise, strokeStyl
         this.filled = true;
     }
 };
-Arc.prototype.render = function(context) {
-    context.beginPath();
-
-    if (this.stroked) context.strokeStyle = this.strokeStyle;
-    if (this.filled)  context.fillStyle = this.fillStyle;
-
-    context.arc(this.x, this.y, this.radius, this.startAngle, this.endAngle, this.anticlockwise);
-
-    if (this.filled)  context.fill();
-    if (this.stroked) context.stroke();
-};
+Arc.prototype.getPrimitives = function() { return [ this ]; };
 
 var Circle = function(x, y, radius, strokeStyle, fillStyle) {
+    this.name = 'Circle';
     this.x = x;
     this.y = y;
     this.radius = radius;
     this.strokeStyle = strokeStyle;
+    this.isPrimitive = false;
 
     if (typeof strokeStyle === 'undefined' || strokeStyle === null || strokeStyle === '') {
         this.strokeStyle = null;
@@ -89,32 +79,27 @@ var Circle = function(x, y, radius, strokeStyle, fillStyle) {
         this.filled = true;
     }
 };
-Circle.prototype.render = function(context) {
-    context.beginPath();
-
-    if (this.stroked) context.strokeStyle = this.strokeStyle;
-    if (this.filled)  context.fillStyle = this.fillStyle;
-
-    context.arc(this.x, this.y, this.radius, 0, Math.PI*2, false);
-
-    if (this.filled)  context.fill();
-    if (this.stroked) context.stroke();
+Circle.prototype.getPrimitives = function() {
+    return [ new Arc(this.x, this.y, this.radius, 0, Math.PI*2, this.anticlockwise, this.strokeStyle, this.fillStyle) ];
 };
 
 var CircleThing = function(x, y, radius, numberOfPoints, rotation) {
+    this.name = 'CircleThing';
     this.x = x;
     this.y = y;
     this.radius = radius;
     this.rotation = rotation;
     this.numberOfPoints = numberOfPoints;
+    this.isPrimitive = false;
 };
 CircleThing.prototype.setRotation = function(rotation) {
     this.rotation = rotation;
 };
-CircleThing.prototype.render = function(context) {
+CircleThing.prototype.getPrimitives = function() {
     var colours = [ '#F55', '#55F', '#5F5', '#FF5' ];
     var colourIndex = 0;
 
+    var lines = [];
     var step = 2.0*Math.PI/this.numberOfPoints;
 
     for(var angle = this.rotation; angle-this.rotation < (2.0*Math.PI) ; angle += step) {
@@ -126,7 +111,7 @@ CircleThing.prototype.render = function(context) {
         var y2 = this.y + (this.radius * Math.cos(angle));
 
         var line = new Line(x1, y1, x2, y2, colours[colourIndex]);
-        line.render(context);
+        lines.push(line);
 
         if (colourIndex === colours.length-1) {
             colourIndex = 0;
@@ -134,16 +119,20 @@ CircleThing.prototype.render = function(context) {
             colourIndex++;
         }
     }
+
+    return lines;
 };
 
 var GraphThing = function(xStart, yStart, width, height, numberOfLines) {
+    this.name = 'GraphThing';
     this.xStart = xStart;
     this.yStart = yStart;
     this.width = width;
     this.height = height;
     this.numberOfLines = numberOfLines;
+    this.isPrimitive = false;
 };
-GraphThing.prototype.render = function(context) {
+GraphThing.prototype.getPrimitives = function() {
     var yStep = this.height / this.numberOfLines;
     var xStep = this.width / this.numberOfLines;
     var xMax = this.width - 1;
@@ -152,9 +141,11 @@ GraphThing.prototype.render = function(context) {
     var colours = [ '#F55', '#55F', '#5F5', '#FF5' ];
     var colourIndex = 0;
 
+    var lines = [];
+
     for (var i=0 ; i<this.numberOfLines; i++) {
         var line = new Line(this.xStart, this.yStart+(i*yStep), this.xStart+(i*xStep), this.yStart+yMax, colours[colourIndex]);
-        line.render(context);
+        lines.push(line);
         if (colourIndex === colours.length-1) {
             colourIndex = 0;
         } else {
@@ -164,6 +155,8 @@ GraphThing.prototype.render = function(context) {
 
     var yAxisLine = new Line(this.xStart, this.yStart, this.xStart, this.yStart + yMax, '#F00');
     var xAxisLine = new Line(this.xStart, this.yStart + yMax, this.xStart + xMax, this.yStart + yMax, '#00F');
-    yAxisLine.render(context);
-    xAxisLine.render(context);
+    lines.push(yAxisLine);
+    lines.push(xAxisLine);
+
+    return lines;
 };
