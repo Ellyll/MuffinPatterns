@@ -95,6 +95,10 @@ function draw_circle_graffiti(renderMode) {
     if (renderMode === 'svg') {
         var svgRenderer = new SVGRenderer();
         svgRenderer.render(patterns, graphicsElement);
+        var b64 = btoa(graphicsElement.outerHTML);
+        var href = 'data:image/svg+xml;base64,\n'+b64;
+        var downloadLink = document.getElementById('downloadLink');
+        downloadLink.href = href;
     } else {
         var canvasRenderer = new CanvasRenderer();
         var context = graphicsElement.getContext('2d');
