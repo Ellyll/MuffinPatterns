@@ -76,7 +76,7 @@ function SVGRenderer() {
         var strokeStyle = arc.stroked ? arc.strokeStyle : 'none';
         svgChild.setAttributeNS(null, 'fill', fillStyle);
         svgChild.setAttributeNS(null, 'stroke', strokeStyle);
-        svgChild.setAttributeNS(null, 'stroke-width', '0.1');
+        svgChild.setAttributeNS(null, 'stroke-width', '0.2');
 
         svgElement.appendChild(svgChild);
     };
@@ -84,14 +84,17 @@ function SVGRenderer() {
 
     this.renderLine = function(line, svgElement) {
 
-        var svgLine = document.createElementNS(this._svgNS, 'line');
-        svgLine.setAttributeNS(null, 'x1', line.xStart);
-        svgLine.setAttributeNS(null, 'y1', line.yStart);
-        svgLine.setAttributeNS(null, 'x2', line.xStart);
-        svgLine.setAttributeNS(null, 'y2', line.yStart);
-        if (line.filled) svgLine.style.filled = line.fillStyle;
-        if (line.filled) svgLine.style.stroke = line.strokeStyle;
+        var svgChild = document.createElementNS(svgNS, 'line');
+        svgChild.setAttributeNS(null, 'x1', line.xStart);
+        svgChild.setAttributeNS(null, 'y1', line.yStart);
+        svgChild.setAttributeNS(null, 'x2', line.xStart);
+        svgChild.setAttributeNS(null, 'y2', line.yStart);
+        var fillStyle = line.filled ? line.fillStyle : 'none';
+        var strokeStyle = line.stroked ? line.strokeStyle : 'none';
+        svgChild.setAttributeNS(null, 'fill', fillStyle);
+        svgChild.setAttributeNS(null, 'stroke', strokeStyle);
+        svgChild.setAttributeNS(null, 'stroke-width', '0.2');
 
-        svgElement.appendChild(svgLine);
+        svgElement.appendChild(svgChild);
     };
 }

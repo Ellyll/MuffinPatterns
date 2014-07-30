@@ -1,7 +1,12 @@
 
 function maximise_element(element) {
-    element.width = window.innerWidth;
-    element.height = window.innerHeight;
+    if (element.tagName === 'svg') {
+        element.setAttributeNS(null, 'width', window.innerWidth.toString());
+        element.setAttributeNS(null, 'height', window.innerHeight.toString());
+    } else {
+        element.width = window.innerWidth;
+        element.height = window.innerHeight;
+    }
 }
 
 function degrees_to_radians(degrees) {

@@ -8,7 +8,7 @@ function init_circle_graffiti_canvas() {
 
 function init_circle_graffiti_svg() {
     draw_circle_graffiti_svg();
-    //window.addEventListener('resize', draw_circle_graffiti_svg);
+    window.addEventListener('resize', draw_circle_graffiti_svg);
 }
 
 function draw_circle_graffiti_canvas() {
@@ -25,12 +25,12 @@ function draw_circle_graffiti(renderMode) {
     var graphicsElement = document.getElementById(id);
 
     var width = null, height = null;
+    maximise_element(graphicsElement);
 
     if (renderMode === 'svg') {
         width = 100;
         height = 100;
     } else {
-        maximise_element(graphicsElement);
         width = graphicsElement.width;
         height = graphicsElement.height;
     }
@@ -90,8 +90,8 @@ function draw_circle_graffiti(renderMode) {
     // Petals
     add_petals(patterns, xc, yc, 82*percent, 16*percent, colour);
 
-    //patterns.forEach(function(p) { p.render(context); });
 
+    // Render
     if (renderMode === 'svg') {
         var svgRenderer = new SVGRenderer();
         svgRenderer.render(patterns, graphicsElement);
