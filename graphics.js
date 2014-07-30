@@ -1,7 +1,7 @@
 
-function maximise_canvas(canvas) {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+function maximise_element(element) {
+    element.width = window.innerWidth;
+    element.height = window.innerHeight;
 }
 
 function degrees_to_radians(degrees) {

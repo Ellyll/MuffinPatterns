@@ -1,19 +1,39 @@
 
 // Inspired by http://www.bbc.co.uk/news/uk-england-28035013
 
-function init_circle_graffiti() {
-    draw_circle_graffiti();
-    var canvas = document.getElementById('canvas');
-    window.addEventListener('resize', draw_circle_graffiti);
+function init_circle_graffiti_canvas() {
+    draw_circle_graffiti_canvas();
+    window.addEventListener('resize', draw_circle_graffiti_canvas);
 }
 
-function draw_circle_graffiti() {
-    var canvas = document.getElementById('canvas');
-    var context = canvas.getContext('2d');
-    maximise_canvas(canvas);
+function init_circle_graffiti_svg() {
+    draw_circle_graffiti_svg();
+    //window.addEventListener('resize', draw_circle_graffiti_svg);
+}
 
-    var width = canvas.width;
-    var height = canvas.height;
+function draw_circle_graffiti_canvas() {
+    draw_circle_graffiti('canvas');
+}
+
+function draw_circle_graffiti_svg() {
+    draw_circle_graffiti('svg');
+}
+
+function draw_circle_graffiti(renderMode) {
+
+    var id = renderMode === 'svg' ? 'svg' : 'canvas';
+    var graphicsElement = document.getElementById(id);
+
+    var width = null, height = null;
+
+    if (renderMode === 'svg') {
+        width = 100;
+        height = 100;
+    } else {
+        maximise_element(graphicsElement);
+        width = graphicsElement.width;
+        height = graphicsElement.height;
+    }
     var xc = (width-1)/2;
     var yc = (height-1)/2;
     var shortestSide = Math.min(width, height);
@@ -23,7 +43,7 @@ function draw_circle_graffiti() {
     var patterns = [];
 
     // Concentric circles
-    patterns.push(new Circle(xc, yc, 2, colour, colour));
+    patterns.push(new Circle(xc, yc, 1*percent, colour, colour));
     patterns.push(new Circle(xc, yc, 14*percent, colour));
     patterns.push(new Circle(xc, yc, 28*percent, colour));
     patterns.push(new Circle(xc, yc, 58*percent, colour));
@@ -72,8 +92,14 @@ function draw_circle_graffiti() {
 
     //patterns.forEach(function(p) { p.render(context); });
 
-    var canvasRender = new CanvasRenderer();
-    canvasRender.render(patterns, context);
+    if (renderMode === 'svg') {
+        var svgRenderer = new SVGRenderer();
+        svgRenderer.render(patterns, graphicsElement);
+    } else {
+        var canvasRenderer = new CanvasRenderer();
+        var context = graphicsElement.getContext('2d');
+        canvasRenderer.render(patterns, context);
+    }
 }
 
 function add_petals(patterns, xc, yc, r1, r2, colour) {
